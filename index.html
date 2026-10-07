@@ -249,7 +249,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
       <div class="wrap">
         <div>
           <h1>You don't have to untangle this alone.</h1>
-          <p class="sub">The clear, step-by-step roadmap for NYC widows, widowers, and adult orphans navigating estate paperwork, child logistics, and local resources. No lawyer required. 100% Free.</p>
+          <p class="sub">A clear, step-by-step roadmap for anyone in New York City coping with the death of someone they love, from paperwork and children's care to local help. Free, private, and no account needed.</p>
           <ul class="promises">
             <li>No account</li>
             <li>No uploads</li>
@@ -363,7 +363,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
 
   var STEPS = [
     { key: "lost", q: "Who have you lost?", hint: "This changes which steps and benefits apply to you.",
-      opts: [["spouse","My spouse or partner"],["parent","A parent (I'm an adult child)"],["other","Another family member or someone close"]] },
+      opts: [["spouse","My spouse or partner"],["parent","A parent"],["child","A child"],["relative","A sibling or another relative"],["friend","A friend or someone close"]] },
     { key: "borough", q: "Which borough will handle the estate?", hint: "This points you to the right Surrogate's Court.",
       opts: [["manhattan","Manhattan"],["brooklyn","Brooklyn"],["queens","Queens"],["bronx","The Bronx"],["statenisland","Staten Island"]] },
     { key: "kids", q: "Are there children at home?", hint: "This sets up free summer and child-care options.",
@@ -377,7 +377,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
   ];
 
   var LABELS = {
-    lost: { spouse: "Lost a spouse or partner", parent: "Lost a parent", other: "Lost a family member" },
+    lost: { spouse: "Lost a spouse or partner", parent: "Lost a parent", child: "Lost a child", relative: "Lost a family member", friend: "Lost someone close" },
     kids: { k8: "Children K–8", hs: "High schooler", both: "Children K–12", none: "No children" },
     estate: { small: "Estate under $50k", big: "Estate over $50k", unsure: "Estate size unsure" },
     tech: { apple: "Apple device locked", android: "Android device locked", windows: "Windows PC locked", open: "Full device access" },
@@ -508,17 +508,35 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
       links: [["NYC death certificates", "https://www.nyc.gov/site/doh/services/death-certificates.page"]] });
     var spouse = x.lost === "spouse";
     var parent = x.lost === "parent";
-    if (!spouse) {
+    var child = x.lost === "child";
+    var friend = x.lost === "friend";
+    if (parent || x.lost === "relative") {
       p1.push({ title: "Find the will, and agree with your family on who will lead",
         body: "Look for a will and for who is named executor. If there is no will, state law decides who can ask the court to serve as administrator, and spouses and children usually come first. Talk with brothers and sisters early, even when it's hard. Many estate fights start from one person acting alone.",
         links: [["LawHelpNY", "https://www.lawhelpny.org"]] });
+    }
+    if (child) {
+      p1.push({ title: "Find out whether any paperwork is needed for your child's estate",
+        body: "If your child was an adult, look for a will and for accounts with a named beneficiary, and ask the court clerk how to proceed. If your child was a minor, there may be little or no paperwork, and the clerk can tell you whether anything is needed. You don't have to sort this out in the first days.",
+        links: [["LawHelpNY", "https://www.lawhelpny.org"]] });
+    }
+    if (friend) {
+      p1.push({ title: "Find out what your role is",
+        body: "If you aren't a relative, the family or the named executor usually handles the legal and financial side. Ask what they need from you, such as sharing keys, passwords, or a list of accounts you know about. If no relative can be found, the county Public Administrator may handle the estate, and the Surrogate's Court clerk can tell you how.",
+        links: [["NY courts", "https://www.nycourts.gov"]] });
+    }
+    if (!spouse) {
       p1.push({ title: "Secure the home and the mail",
-        body: "Change or add locks if other people have keys, forward the mail, and photograph what's inside before anything is moved. Many insurance policies limit coverage when a home sits empty, so tell the insurer if no one will be living there." });
+        body: "If they lived alone, change or add locks if other people have keys, forward the mail, and photograph what's inside before anything is moved. Many insurance policies limit coverage when a home sits empty, so tell the insurer if no one will be living there." });
     }
     p1.push({ title: "Report the death to Social Security",
       body: spouse
         ? "The funeral home often does this, so ask. Then ask SSA about the one-time $255 payment and about survivor benefits. Spouses and children may qualify, and these benefits are not based on need. Phone: 1-800-772-1213."
-        : "The funeral home often does this, so ask. Monthly survivor benefits mostly go to a spouse and to children under 18, so adult children usually don't qualify, with some exceptions such as an adult child who was disabled before 22. Ask SSA what applies, and what to do with any payment that arrives after the death, because it often has to be returned. Phone: 1-800-772-1213.",
+        : child
+        ? "The funeral home often does this, so ask. Ask SSA whether any benefits apply, for example if your child was working or received a disability benefit, and what to do with any payment that arrives after the death, because it often has to be returned. Phone: 1-800-772-1213."
+        : parent
+        ? "The funeral home often does this, so ask. Monthly survivor benefits mostly go to a spouse and to children under 18, so adult children usually don't qualify, with some exceptions such as an adult child who was disabled before 22. Ask SSA what applies, and what to do with any payment that arrives after the death, because it often has to be returned. Phone: 1-800-772-1213."
+        : "The funeral home often does this, so ask. Ask SSA what applies, and what to do with any payment that arrives after the death, because it often has to be returned. Monthly survivor benefits mostly go to a spouse and to children under 18. Phone: 1-800-772-1213.",
       links: [["SSA survivor benefits", "https://www.ssa.gov/benefits/survivors/"]] });
     p1.push({ title: "If rent, heat, or groceries are at risk this month",
       body: "Call your landlord and utility company early. Many of the places that help don't have strict income limits, and others do. The Resources page sorts them for you.",
@@ -594,9 +612,16 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
       if (x.kids === "both") { camp.body = "Summer Rising is a free program for K–8 students, and the Summer Youth Employment Program places teens ages 14 to 24 in paid jobs. The Fresh Air Fund offers free summer experiences for NYC children, and eligibility varies. Ask about child-care vouchers too, which depend on income and need."; camp.links = [["NYC Youth Programs (DYCD)", "https://www.nyc.gov/site/dycd/index.page"], ["Fresh Air Fund", "https://freshair.org"]]; }
       p3.push(camp);
     }
-    if (parent) {
+    {
+      var gtext = spouse
+        ? "Losing a spouse or partner changes almost everything at once, and it is normal to feel overwhelmed, numb, or all over the place. You don't have to do the paperwork and the grieving alone. Your doctor, a grief counselor, a support group for people who have lost a partner, or your faith community can help. For immediate support, call or text 988."
+        : parent
+        ? "Losing a parent as an adult, especially the last one, can feel disorienting even when you saw it coming. You don't need a bigger reason to ask for support. Your doctor, a grief counselor, or your faith community can help. For immediate support, call or text 988."
+        : child
+        ? "The death of a child is among the hardest losses there is, and there is no right way to grieve. You don't have to carry it alone. Ask your doctor or a grief counselor about support, and ask the hospital or funeral home about groups for bereaved parents. For immediate support, call or text 988."
+        : "Grief doesn't depend on how close the paperwork says you were. If this loss is heavy, ask your doctor, a grief counselor, or your faith community about support. For immediate support, call or text 988.";
       p3.push({ title: "Make room for your own grief",
-        body: "Losing a parent as an adult, especially the last one, can feel disorienting even when you saw it coming. You don't need a bigger reason to ask for support. Your doctor, a grief counselor, or your faith community can help. For immediate support, call or text 988.",
+        body: gtext,
         links: [["988 Lifeline", "https://988lifeline.org"]] });
     }
     p3.push({ title: "Close or transfer accounts and subscriptions, one by one",
