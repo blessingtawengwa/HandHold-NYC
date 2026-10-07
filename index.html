@@ -302,6 +302,19 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
       </div>
 
       <div class="rgroup">
+        <h3>Pets and animals</h3>
+        <p class="rintro">If your loved one had a pet, start with food, water, and a safe place today. Then decide on a long-term home when you can.</p>
+        <ul class="rlist">
+          <li><b>Animal Care Centers of NYC.</b> The city's shelter system. Ask about emergency help and what your options are if no one can keep the pet. <span class="links"><a href="https://www.nycacc.org" target="_blank" rel="noopener noreferrer">NYC ACC</a></span></li>
+          <li><b>ASPCA.</b> Pet-owner resources, and information on keeping a pet in its home when possible. <span class="links"><a href="https://www.aspca.org" target="_blank" rel="noopener noreferrer">ASPCA</a></span></li>
+          <li><b>Bide-A-Wee.</b> A New York animal welfare organization that helps with adoption and rehoming. <span class="links"><a href="https://www.bideawee.org" target="_blank" rel="noopener noreferrer">Bide-A-Wee</a></span></li>
+          <li><b>Humane Society of New York.</b> Shelter and veterinary services in Manhattan. <span class="links"><a href="https://www.humanesocietyny.org" target="_blank" rel="noopener noreferrer">Humane Society of NY</a></span></li>
+          <li><b>Rehome by Adopt-a-Pet.</b> A tool for finding a new home yourself while meeting the adopter. <span class="links"><a href="https://www.adoptapet.com" target="_blank" rel="noopener noreferrer">Adopt-a-Pet</a></span></li>
+          <li><b>Pet food help.</b> Many shelters and rescues run pet food pantries. Ask your vet or one of the groups above. Ask about birds, reptiles, and other animals separately, since they often need specialized care.</li>
+        </ul>
+      </div>
+
+      <div class="rgroup">
         <h3>Locked phones, computers, and accounts</h3>
         <ul class="rlist">
           <li><b>Android phone or tablet.</b> Google can't unlock a screen for family, and a factory reset erases everything. Family can send Google a request about the person's Google account, and Google decides each case and may not release content. <span class="links"><a href="https://support.google.com/accounts/troubleshooter/6357590" target="_blank" rel="noopener noreferrer">Google: deceased user's account</a> <a href="https://support.google.com/android" target="_blank" rel="noopener noreferrer">Android Help</a></span></li>
@@ -332,7 +345,8 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
 </footer>
 
 <dialog id="vendor-dialog" aria-labelledby="vd-title">
-  <h3 id="vd-title">Ask this provider about your situation</h3>
+  <h3 id="vd-title">Preview: contacting a provider</h3>
+  <p class="note" style="margin:0 0 8px"><b>Demo only.</b> No real provider is connected yet. This screen shows how you would choose what to share.</p>
   <p class="note" id="vd-name" style="margin:0 0 10px"></p>
   <p style="margin:0 0 6px"><b>Choose what to share.</b> Nothing is shared unless it is checked.</p>
   <div id="vd-checks"></div>
@@ -368,6 +382,8 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
       opts: [["manhattan","Manhattan"],["brooklyn","Brooklyn"],["queens","Queens"],["bronx","The Bronx"],["statenisland","Staten Island"]] },
     { key: "kids", q: "Are there children at home?", hint: "This sets up free summer and child-care options.",
       opts: [["k8","Yes, kindergarten to 8th grade"],["hs","Yes, high school"],["both","Both age groups"],["none","No children"]] },
+    { key: "pets", q: "Did your loved one have a pet?", hint: "A pet may need care today, even if everything else can wait.",
+      opts: [["none","No pets"],["dogcat","Yes, a dog or cat"],["other","Yes, another kind of animal"]] },
     { key: "estate", q: "About how large is the estate?", hint: "A rough guess is fine. Count what was owned in their name alone. Accounts with a joint owner or a named beneficiary often pass outside the estate.",
       opts: [["small","Under $50,000"],["big","Over $50,000"],["unsure","I'm not sure yet"]] },
     { key: "tech", q: "What's locked?", hint: "This builds a recovery path for phones and computers.",
@@ -378,6 +394,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
 
   var LABELS = {
     lost: { spouse: "Lost a spouse or partner", parent: "Lost a parent", child: "Lost a child", relative: "Lost a family member", friend: "Lost someone close" },
+    pets: { none: "", dogcat: "Pet: dog or cat", other: "Pet: another animal" },
     kids: { k8: "Children K–8", hs: "High schooler", both: "Children K–12", none: "No children" },
     estate: { small: "Estate under $50k", big: "Estate over $50k", unsure: "Estate size unsure" },
     tech: { apple: "Apple device locked", android: "Android device locked", windows: "Windows PC locked", open: "Full device access" },
@@ -427,7 +444,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
   function renderStep() {
     var s = STEPS[step];
     var dots = STEPS.map(function (_, i) { return '<span class="' + (i <= step ? "on" : "") + '"></span>'; }).join("");
-    var meta = s.optional ? "One more, if it applies" : "Question " + (step + 1) + " of 5";
+    var meta = s.optional ? "One more, if it applies" : "Question " + (step + 1) + " of 6";
     var opts = s.opts.map(function (o) {
       var pressed = answers[s.key] === o[0];
       return '<li><button class="opt" data-val="' + o[0] + '" aria-pressed="' + pressed + '">' + o[1] + '</button></li>';
@@ -459,7 +476,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
     var x = answers;
     var lines = ["HANDHOLD NYC: YOUR ROADMAP", ""];
     var parts = [BOROUGHS[x.borough].n];
-    ["lost", "kids", "estate", "tech", "track"].forEach(function (k) { if (x[k] && LABELS[k][x[k]]) parts.push(LABELS[k][x[k]]); });
+    ["lost", "kids", "pets", "estate", "tech", "track"].forEach(function (k) { if (x[k] && LABELS[k][x[k]]) parts.push(LABELS[k][x[k]]); });
     lines.push("Your answers: " + parts.join("; "));
     lines.push("");
     var boxes = $$("#results .stop input"), n = 0;
@@ -541,12 +558,23 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
     p1.push({ title: "If rent, heat, or groceries are at risk this month",
       body: "Call your landlord and utility company early. Many of the places that help don't have strict income limits, and others do. The Resources page sorts them for you.",
       goto: "resources" });
+    var hasPet = x.pets && x.pets !== "none";
+    if (hasPet) {
+      p1.push({ tag: "Pet care", title: "Make sure the pet is safe and cared for today",
+        body: "If the pet is alone in the home, get someone you trust there as soon as you can. Pets need food, water, and a way to go outside or use a litter box within hours. If police or the Medical Examiner are involved, tell them a pet is in the home. If no one can go, call 311 and ask which agency can help reach the animal, such as Animal Care Centers of NYC. If a neighbor, friend, or relative can take the pet for a few days, that gives you time to decide." + (x.pets === "other" ? " Birds, reptiles, fish, and small animals have special needs such as temperature, diet, and cage setup, so ask a vet or a licensed rescue for emergency care instructions." : "") + " Write down the vet's name, the pet's food, and any medicine.",
+        links: [["Animal Care Centers of NYC", "https://www.nycacc.org"], ["NYC 311", "https://portal.311.nyc.gov"]] });
+    }
     if (kids) {
       p1.push({ title: "Tell each child's school counselor",
         body: "A short call or email lets teachers know before anyone asks the child a hard question. Ask whether the school has bereavement support." });
     }
 
     /* two weeks */
+    if (hasPet) {
+      p2.push({ tag: "Pet care", title: "Decide where the pet will live, and talk to family first",
+        body: "Legally, a pet is treated as property of the estate. Check whether the will names someone to care for the pet. If it doesn't, talk with family before rehoming the pet for good, so no one is surprised later. If no one can keep the pet, safer options include a shelter, a breed or species rescue, or a rehoming service where you meet the adopter. Avoid giving a pet away through an anonymous online ad. Ask your own vet too, since they often know who is looking for a pet.",
+        links: [["ASPCA", "https://www.aspca.org"], ["Bide-A-Wee", "https://www.bideawee.org"], ["Humane Society of New York", "https://www.humanesocietyny.org"], ["Rehome by Adopt-a-Pet", "https://www.adoptapet.com"]] });
+    }
     if (parent) {
       p2.push({ tag: "If your parent received Medicaid", title: "Check for Medicaid estate recovery before you distribute anything",
         body: "If your parent received Medicaid, including help with nursing home or home care, New York may seek repayment from the estate. Before you sell property or pay out money to heirs, ask an elder-law attorney or a free legal help organization.",
@@ -661,7 +689,7 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
   function showResults() {
     var x = answers;
     var chips = ['<li>' + BOROUGHS[x.borough].n + '</li>'];
-    ["lost", "kids", "estate", "tech", "track"].forEach(function (k) { if (x[k] && LABELS[k][x[k]]) chips.push('<li>' + LABELS[k][x[k]] + '</li>'); });
+    ["lost", "kids", "pets", "estate", "tech", "track"].forEach(function (k) { if (x[k] && LABELS[k][x[k]]) chips.push('<li>' + LABELS[k][x[k]] + '</li>'); });
 
     var road = buildRoadmap(x);
     lastRoad = road;
@@ -704,11 +732,11 @@ dialog textarea { width: 100%; min-height: 92px; border: 1.5px solid var(--line)
 
     /* providers */
     html += '<section class="panel" id="prov-panel"><h3>Optional help from local providers</h3>' +
-      '<p class="note" style="margin:0;max-width:64ch">You never have to use these. Names below are placeholders for vetted partners. If you pick one, you choose exactly what to share.</p>' +
+      '<p class="note" style="margin:0;max-width:64ch">You never have to use these. Names below are placeholders for vetted partners, and none are connected yet in this prototype. Tap a card to preview how you would choose exactly what to share.</p>' +
       '<div class="prov-grid">' +
       buildProviders(x).map(function (p) {
         return '<div class="prov"><span class="badge">' + p.badge + '</span><h4>' + p.name + '</h4><p>' + p.text + '</p><p style="flex:none;font-size:.85rem">' + p.note + '</p>' +
-          '<button class="btn" data-prov="' + p.id + '" data-name="' + p.name + '">Ask about this</button></div>';
+          '<button class="btn" data-prov="' + p.id + '" data-name="' + p.name + '">Preview what I\'d share</button></div>';
       }).join("") +
       '<div class="prov locked"><span class="badge">Coming soon</span><h4>Subscription canceler toolkit</h4><p>A browser tool that helps you find and cancel recurring charges. Planned for $10 to $29. Not in this prototype.</p><button class="btn ghost" disabled>Not available yet</button></div>' +
       '</div></section>';
